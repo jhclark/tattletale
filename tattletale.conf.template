@@ -1,0 +1,37 @@
+# Note: Since this file contains sensitive information, it's recommended that you
+# set permissions to chmod o-rwx so that others can't view it
+
+[location]
+# This gets logged in the DB so that you can move the device around your home to determine
+# if different locations behave differently (e.g. due to router coverage issues)
+location=bedroom
+
+[urls]
+# Apple Airport
+routerUrl = 10.0.1.1
+
+# Motorola Surfboard
+modemUrl = 192.168.100.1
+modemStatusPages = indexData.htm cmSignalData.htm cmAddressData.htm cmConfigData.htm cmLogsData.htm
+
+externalUrl = www.bing.com
+
+
+[email]
+emailAddress = me@gmail.com
+emailPassword = hczctbznvkqppzxl
+
+
+[database]
+dbName = tattletale.db
+
+[logging]
+# How should we store status pages from the modem to do more detailed analysis about what went wrong?
+logDir = logs
+
+
+[twitter]
+consumerKey = ...
+consumerSecret = ...
+accessToken = ...
+accessTokenSecret = ...
