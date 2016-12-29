@@ -20,4 +20,4 @@ api = twitter.Api(consumer_key=twitterConsumerKey,
 def tweet(msg: str):
     api.PostUpdate(msg)
 
-tweet('testing')
+#tweet('testing')

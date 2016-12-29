@@ -1,9 +1,12 @@
+#!/usr/bin/env python3
+
 import urllib.request
 import os
 import os.path
 import platform
 import configparser
 import time
+import traceback
 
 from tattletaleled import *      # Raspberry Pi on-board LED control
 from tattletaledb import *       # SqLite database functions
@@ -14,7 +17,7 @@ def isUp(host: str) -> bool:
     pingCmd = r"C:\Windows\System32\PING.EXE -n 1" if platform.system().lower() == "windows" else "ping -c 1"
     return os.system(pingCmd + " " + host + ">NUL") == 0
 
-def grabStatus(momemUrl: str, modemStatusPages: list, logDir: str):
+def grabStatus(modemUrl: str, modemStatusPages: list, logDir: str):
     for statusPage in modemStatusPages:
         url = 'http://{}/{}'.format(modemUrl, statusPage)
         logFile = '{}/{}'.format(logDir, statusPage)
@@ -34,7 +37,7 @@ def main():
         checkConnection(config)
         # don't sleep -- that's done during LED display functions
 
-def checkConnection(config: ConfigParser):
+def checkConnection(config: configparser.ConfigParser):
     routerUrl = config.get('urls', 'routerUrl')
     modemUrl = config.get('urls', 'modemUrl')
     externalUrl = config.get('urls', 'externalUrl')
@@ -42,6 +45,7 @@ def checkConnection(config: ConfigParser):
     modemStatusPages = config.get('urls', 'modemStatusPages').split()
     logDir = config.get('logging', 'logDir')
 
+    print("Checking connection status")
     isRouterUp = isUp(routerUrl)
     isModemUp = isUp(modemUrl)
     isInternetUp = isUp(externalUrl)
@@ -51,8 +55,13 @@ def checkConnection(config: ConfigParser):
 
     # 4) grab modem status pages
     # TODO: Write to date stamped directory every so often OR every time the internet is down
-    if not isInternetUp:
-        grabStatus(modemUrl, modemStatusPages, logDir)
+    try:
+        if not isInternetUp:
+            grabStatus(modemUrl, modemStatusPages, logDir)
+    except:
+        tb = traceback.format_exc()
+        print("Error while grabbing modem status page")
+        print(tb)
 
     # TODO: Send daily report email
     # TODO: Post to twitter
@@ -62,12 +71,16 @@ def checkConnection(config: ConfigParser):
     # At the end, do some blocking LED operations for the on-board Raspberry Pi LED
     delaySec = 60
     if isInternetUp:
+        print("All is well")
         show_led(sec=delaySec)
     elif not isRouterUp:
+        print("Router is down")
         blink_led_router_down(sec=delaySec)
     elif not isModemUp:
+        print("Modem is down")
         blink_led_modem_down(sec=delaySec)
     elif not isInternetUp:
+        print("Internet is down (Blame the ISP)")
         blink_led_internet_down(sec=delaySec)
     else:
         print("ERROR: Unexpected state: Don't know how to blink the LED properly...")

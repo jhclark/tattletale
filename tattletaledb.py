@@ -1,6 +1,7 @@
 import sqlite3
 from datetime import date
 import dateutil
+import datetime
 import configparser
 
 def openDb(config: configparser.ConfigParser) -> (sqlite3.Connection, sqlite3.Cursor):
@@ -11,6 +12,7 @@ def openDb(config: configparser.ConfigParser) -> (sqlite3.Connection, sqlite3.Cu
     return (conn, cursor)
 
 def closeDb(conn):
+    conn.commit()
     conn.close()
 
 def createDb(cursor: sqlite3.Cursor):
@@ -20,18 +22,19 @@ def createDb(cursor: sqlite3.Cursor):
          location TEXT,
          isRouterUp BOOLEAN,
          isModemUp BOOLEAN,
-         isInternetUp BOOLEAN)""")
+         isInternetUp BOOLEAN);""")
 
 def writeDbEvent(config: configparser.ConfigParser, isRouterUp: bool, isModemUp: bool, isInternetUp: bool):
+    print("Doing DB insert")
     (conn, cursor) = openDb(config)
-    timestamp = date.today()
     location = config.get('location', 'location')
-    cursor.execute("INSERT INTO events VALUES (?, ?, ?, ?, ?)", timestamp, location, isRouterUp, isModemUp, isInternetUp)
+    cursor.execute("INSERT INTO events VALUES (datetime('now', 'localtime'), ?, ?, ?, ?);", (location, isRouterUp, isModemUp, isInternetUp))
     closeDb(conn)
+    print("Did DB insert")
 
-def getAllDbEvents(config) -> list[(datetime, str)]:
+def getAllDbEvents(config): # -> list[(datetime, str)]:
     (conn, cursor) = openDb(config)
-    cursor.execute("SELECT time, location, isRouterUp, isModemUp, isInternetUp FROM events ORDER BY date(time)")
+    cursor.execute("SELECT time, location, isRouterUp, isModemUp, isInternetUp FROM events ORDER BY date(time);")
     for row in cursor.fetchall():
         yield (dateutil.parser.parse(row[0]), row[1], row[2], row[3], row[4])
     closeDb(conn)

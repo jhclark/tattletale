@@ -1,4 +1,5 @@
 import smtplib
+import configparser
 from email.mime.text import MIMEText
 
 def sendMail(config: configparser.ConfigParser, fro: str, to: str, subject: str, body: str):
