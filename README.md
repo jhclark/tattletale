@@ -44,8 +44,10 @@ At minimum, you'll need to set:
  * Router IP
  * Modem IP
 
+```
     cp tattletale.conf.template tattletale.conf
     nano tattletale.conf
+```
 
 For bonus points, you can set up:
  * Gmail integration to get sent reports. If you're using two-factor authentication (you should be), then you'll need to generate an application specific password.
@@ -54,7 +56,10 @@ For bonus points, you can set up:
 # Running
 
     cd tattletale
-    python3 tattletale.py
+    nohup python3 tattletale.py &
+
+    # View the log of the running process
+    cat nohup.out
 
 # Manually viewing the database
 
