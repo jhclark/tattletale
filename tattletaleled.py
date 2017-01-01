@@ -57,6 +57,7 @@ def blink_led_modem_down(sec: int):
 
 # keep LED on for this long, then turn it back off
 def show_led(sec: int):
+    time.sleep(0.05)
     led_on()
     time.sleep(sec)
     led_off()

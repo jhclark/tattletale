@@ -53,6 +53,10 @@ def checkConnection(config: configparser.ConfigParser):
     # We record these very raw observations here and more intelligent logic is done for each query
     writeDbEvent(config, isRouterUp, isModemUp, isInternetUp)
 
+    # Show user we just did an update
+    blinkSec = 2
+    blink_led_updating(sec=blinkSec)
+
     # 4) grab modem status pages
     # TODO: Write to date stamped directory every so often OR every time the internet is down
     try:
@@ -69,7 +73,7 @@ def checkConnection(config: configparser.ConfigParser):
     # TODO: Add speed test every N minutes
 
     # At the end, do some blocking LED operations for the on-board Raspberry Pi LED
-    delaySec = 60
+    delaySec = 60 - blinkSec
     if isInternetUp:
         print("All is well")
         show_led(sec=delaySec)
