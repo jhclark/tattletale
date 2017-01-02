@@ -25,6 +25,13 @@ def set_led(b):
     else:
         led_off()
 
+def is_led_on():
+    if has_led_control():
+        with open('/sys/class/leds/led0/brightness', 'r') as f:
+            status = f.readline().strip()
+            print("STATUS IS  " + status)
+            return status is not '0'
+
 def blink_led(sec: int, frequency: float, onTime: float, numBlinks: int):
     offTime = frequency - onTime * (2 * numBlinks - 1)
     iterations = int(float(sec) / float(frequency))
@@ -57,7 +64,9 @@ def blink_led_modem_down(sec: int):
 
 # keep LED on for this long, then turn it back off
 def show_led(sec: int):
-    time.sleep(0.05)
+    # Retry turning on every second since LED doesn't reliably turn on for long durations after certain flash patterns
+    led_off()
+    time.sleep(0.5)
     led_on()
     time.sleep(sec)
     led_off()

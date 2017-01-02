@@ -1,2 +1,7 @@
 tattletale.conf
 _*
+NUL
+*.save
+*.db
+logs
+*.out
