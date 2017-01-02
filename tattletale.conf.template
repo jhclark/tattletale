@@ -19,7 +19,8 @@ externalUrl = www.bing.com
 
 [email]
 emailAddress = me@gmail.com
-emailPassword = hczctbznvkqppzxl
+# You should use two factor authentication and create an application specific password here
+emailPassword = xxxxxxxx
 
 
 [database]
